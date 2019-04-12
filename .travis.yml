@@ -6,7 +6,7 @@ before_install:
   - docker build -t csmith75/react-test -f ./client/Dockerfile.dev ./client
 
 script: #primary test running section
-  - docker run csmith75/react-test npm test -- -- coverage #ensures test code exits @ some point
+  - docker run csmith75/react-test npm test -- --coverage #ensures test code exits @ some point
 
 after_success:
   - docker build -t csmith75/multi-client ./client
