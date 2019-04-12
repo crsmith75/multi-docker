@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t csmith75/react-test -f ./client/Dockerfile.dev ./client
+
+script: #primary test running section
+  - docker run csmith75/react-test npm test -- -- coverage #ensures test code exits @ some point
+
+after_success:
+  - docker build -t csmith75/multi-client ./client
+  - docker build -t csmith75/multi-nginx ./nginx
+  - docker build -t csmith75/multi-server ./server
+  - docker build -t csmith75/multi-worker ./worker
+  # Log into Docker CLI. Echo password will retrieve password and send to standard in on other side of pip
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password -stdin
+  # Take images and push to Docker Hub
+  - docker push csmith75/multi-client
+  - docker push csmith75/multi-nginx
+  - docker push csmith75/multi-server
+  - docker push csmith75/multi-worker
